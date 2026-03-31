@@ -52,17 +52,19 @@ const startServer = async () => {
   // Seed default admin user
   try {
     const adminEmail = "xyz@gmail.com";
-    const existingAdmin = await User.findOne({ email: adminEmail });
-    if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash("1234567", 10);
-      await User.create({
-        name: "Admin",
-        email: adminEmail,
-        password: hashedPassword,
-        role: "admin",
-      });
-      console.log("Default admin account created.");
-    }
+    const hashedPassword = await bcrypt.hash("1234567", 10);
+    
+    await User.findOneAndUpdate(
+      { email: adminEmail },
+      { 
+        name: "Admin", 
+        email: adminEmail, 
+        password: hashedPassword, 
+        role: "admin" 
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    console.log("Default admin account ensured.");
   } catch (err) {
     console.error("Error creating default admin:", err);
   }
