@@ -20,21 +20,11 @@ const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Error connecting to MongoDB: ${error.message}`);
-    // Fallback: if configured MongoDB is unavailable, start in-memory DB.
+    // If a MONGO_URI was provided but connection fails, do NOT fallback silently.
+    // This allows the user to see that their Atlas connection failed (e.g. IP not whitelisted).
     if (process.env.MONGO_URI) {
-      try {
-        console.log("Attempting to start in-memory MongoDB fallback...");
-        memoryServer = await MongoMemoryServer.create(MEMORY_MONGO_OPTIONS);
-        const memoryUri = memoryServer.getUri();
-        const conn = await mongoose.connect(memoryUri);
-        console.log("Configured MongoDB unavailable. Using in-memory MongoDB.");
-        console.log(`MongoDB connected: ${conn.connection.host}`);
-        return;
-      } catch (fallbackError) {
-        console.error("MongoDB fallback connection error:", fallbackError.message);
-      }
+      console.error("Failed to connect to the provided MONGO_URI. Please check your credentials and ensure your IP is whitelisted in MongoDB Atlas.");
     }
-    console.error("MongoDB connection error:", error.message);
     process.exit(1);
   }
 };
