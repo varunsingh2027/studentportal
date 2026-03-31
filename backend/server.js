@@ -9,6 +9,8 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const exportRoutes = require("./routes/exportRoutes");
+const User = require("./models/User");
+const bcrypt = require("bcryptjs");
 
 dotenv.config();
 const app = express();
@@ -46,6 +48,25 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   await connectDB();
+
+  // Seed default admin user
+  try {
+    const adminEmail = "xyz@gmail.com";
+    const existingAdmin = await User.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash("1234567", 10);
+      await User.create({
+        name: "Admin",
+        email: adminEmail,
+        password: hashedPassword,
+        role: "admin",
+      });
+      console.log("Default admin account created.");
+    }
+  } catch (err) {
+    console.error("Error creating default admin:", err);
+  }
+
   app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
   });

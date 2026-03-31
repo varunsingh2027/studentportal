@@ -11,7 +11,6 @@ function SignupPage() {
     name: "",
     email: "",
     password: "",
-    role: "student",
   });
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +36,7 @@ function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
       <form onSubmit={onSubmit} className="w-full max-w-md rounded-xl bg-white p-6 shadow">
         <h1 className="text-2xl font-bold">Signup</h1>
-        <p className="mb-4 text-sm text-slate-500">Create student/admin account</p>
+        <p className="mb-4 text-sm text-slate-500">Create your account</p>
 
         <div className="mb-3">
           <label className="mb-1 block text-sm">Name</label>
@@ -65,17 +64,7 @@ function SignupPage() {
             onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
           />
         </div>
-        <div className="mb-4">
-          <label className="mb-1 block text-sm">Role</label>
-          <select
-            className="w-full rounded-md border border-slate-300 px-3 py-2"
-            value={form.role}
-            onChange={(e) => setForm((p) => ({ ...p, role: e.target.value }))}
-          >
-            <option value="student">Student</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
+
 
         <button
           disabled={loading}

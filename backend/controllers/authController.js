@@ -12,13 +12,15 @@ const createToken = (user) => {
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
-    if (!name || !email || !password || !role) {
+const { name, email, password } = req.body;
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    if (!["student", "admin"].includes(role)) {
-      return res.status(400).json({ message: "Role must be student or admin" });
+    let role = "student";
+    // Allow the specific admin email to be registered as an admin
+    if (email.toLowerCase() === "xyz@gmail.com") {
+      role = "admin";
     }
 
     const existing = await User.findOne({ email: email.toLowerCase() });
